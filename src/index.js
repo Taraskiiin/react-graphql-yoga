@@ -4,8 +4,9 @@ import axios from "axios";
 const server = new GraphQLServer({
     typeDefs: `
       type Query {
-        agent: User!
+        agent(id:ID!): User!
         agents: [User!]
+        multiply(value: Int!): Int
       }
 
       type User {
@@ -18,13 +19,18 @@ const server = new GraphQLServer({
     `,
     resolvers: {
         Query: {
-            agent: async () => {
-                const res = await axios.get("http://localhost:3004/users/1");
+            agent: async (parent, args, context, info) => {
+                const res = await axios.get(
+                    `http://localhost:3004/users/${args.id}`
+                );
                 return res.data;
             },
             agents: async () => {
                 const res = await axios.get("http://localhost:3004/users");
                 return res.data;
+            },
+            multiply: async (parent, args, context, info) => {
+                return args.value * 10;
             },
         },
     },
