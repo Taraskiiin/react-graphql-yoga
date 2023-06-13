@@ -1,4 +1,5 @@
 import { GraphQLServer } from "graphql-yoga";
+import axios from "axios";
 
 const server = new GraphQLServer({
     typeDefs: `
@@ -17,33 +18,13 @@ const server = new GraphQLServer({
     `,
     resolvers: {
         Query: {
-            agent() {
-                return {
-                    id: 1,
-                    name: "Taras",
-                    age: 23,
-                    married: true,
-                    average: 4.5,
-                };
+            agent: async () => {
+                const res = await axios.get("http://localhost:3004/users/1");
+                return res.data;
             },
-            agents() {
-                return [
-                    {
-                        id: 1,
-                        name: "Taras",
-                        age: 23,
-                        married: true,
-                        average: 4.5,
-                    },
-
-                    {
-                        id: 2,
-                        name: "Petro",
-                        age: 26,
-                        married: false,
-                        average: 2.5,
-                    },
-                ];
+            agents: async () => {
+                const res = await axios.get("http://localhost:3004/users");
+                return res.data;
             },
         },
     },
